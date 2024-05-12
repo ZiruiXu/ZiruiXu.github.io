@@ -1,0 +1,7 @@
+section.section-publication ol h3 {
+  text-align: center;
+}
+
+li + li {
+  margin-top: 0.5em;
+}
