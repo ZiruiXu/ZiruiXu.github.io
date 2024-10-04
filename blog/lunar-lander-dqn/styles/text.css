@@ -1,0 +1,16 @@
+.scrollable {
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.deep-purple {
+  color: rgb(153, 50, 204);
+}
+
+.orange {
+  color: rgb(230, 97, 0);
+}
+
+.dark-purple, figure.training-episode-render figcaption {
+  color: rgb(93, 58, 155);
+}

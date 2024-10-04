@@ -1,0 +1,12 @@
+.attendance-form-div:not(.wrong-time) section.wrong-time-error {
+  display: none;
+}
+
+.attendance-form-div.wrong-time section.form-submit {
+  display: none;
+}
+
+.attendance-form-div section.form-submit form input, .attendance-form-div section.form-submit form button {
+  font-size: 1em;
+  padding: 0.5em;
+}

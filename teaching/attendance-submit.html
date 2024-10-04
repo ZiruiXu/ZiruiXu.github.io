@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png">
+<link rel="manifest" href="/images/favicon/site.webmanifest">
+<link rel="mask-icon" href="/images/favicon/safari-pinned-tab.svg" color="#000000">
+<meta name="theme-color" content="#ffffff">
+<title>Zirui Xu - Personal Website</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/styles/general.css">
+<link rel="stylesheet" href="/styles/sidebar.css">
+<link rel="stylesheet" href="./styles/attendance.css">
+</head>
+
+<body>
+
+<nav class="sidebar">
+  <a class="icon-button"><img class="icon-picture" src="/images/favicon/safari-pinned-tab.svg" alt="icon"></a>
+  <a href="/">Home</a>
+  <a href="/research/">Research</a>
+  <a class="active-button">Teaching</a>
+  <a href="/blog/">Blog</a>
+  <a href="/contact/">Contact</a>
+  <a class="menu-switch" id="menuSwitch">Hide Menu</a>
+</nav>
+
+<main class="main-body">
+
+<section id="attendanceFormDiv" class="attendance-form-div">
+  <h1>Attendance Submission</h1>
+  <section class="wrong-time-error">
+    <h2>Currently Unavailable</h2>
+    <p>Sorry, this is not the right time to submit your attendance. You should submit your attendance during your recitation in the classroom. Please come back later after your recitation has started.</p>
+  </section>
+  <section class="instruction">
+    <h2>How to Submit</h2>
+    <ul>
+      <li>Enter below your columbia email address starting with your UNI.</li>
+      <li>Click the submit button and then wait for up to 1 minute to be redirected.</li>
+      <li>Complete a reCAPTCHA to verify that you are a human.</li>
+      <li>You will receive a confirmation email.</li>
+    </ul>
+  </section>
+  <section class="warning">
+    <h2>Restrictions</h2>
+    <ul>
+      <li>Only submit during the recitation that you are attending.</li>
+      <li>Only submit in the classroom.</li>
+      <li>DO NOT DISHONESTLY SUBMIT REMOTELY!</li>
+    </ul>
+  </section>
+  <section class="form-submit">
+  <h2>Submit Here</h2>
+  <form id="attendanceForm" action="https://formsubmit.co/28defaa243e4da0eac92b9019d5808cb" method="POST">
+    <input type="hidden" name="_next" value="https://ziruixu.github.io/teaching/attendance-submitted.html">
+    <input type="hidden" name="_subject" value="Attendance of Multivariable Calculus">
+    <input type="hidden" name="_autoresponse" id="replyMessage">
+    <input type="email" name="email" placeholder="ab1234@columbia.edu" required>
+    <button type="submit">Submit</button>
+  </form>
+  </section>
+  <section>
+    <h2>Grading Policy</h2>
+    <p>Assuming the full credit for the recitation is 10 (otherwise your score will be scaled accordingly), then your score will be calculated by the following formula:</p>
+    <p>score = max { 0, min { 10, 10 &ndash; max { 0, absence &ndash; 3 } + presenter &ndash; 10 plagiarism } },</p>
+    <p>where "absence" is the number of recitations from which you are absent, "presenter" is the number of recitations at which you are the presenter, and "plagiarism" is the number of recitations for which you dishonestly submit attendance remotely. In other words, your score will always be between 0 and 10, and you can skip up to 3 recitations without any penalty. After skipping 3 recitations, you will lose 1 point each time you skip 1 more recitation. However, you can earn 1 point back each time you are the presenter of your group. Furthermore, if you never show up at a recitation but dishonestly submit attendance remotely, then that is considered as plagiarism, and you will lose 10 points each time you commit plagiarism.</p>
+    <p>The bottom line is that you will receive full credit if you only skip 3 recitations, or even if you skip 4 recitations and be a presenter once.</p>
+  </section>
+</section>
+
+</main>
+
+<script src="/scripts/hideMenu.js"></script>
+<script src="./scripts/attendance.js"></script>
+
+</body>
+</html>

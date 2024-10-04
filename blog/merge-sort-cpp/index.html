@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png">
+<link rel="manifest" href="/images/favicon/site.webmanifest">
+<link rel="mask-icon" href="/images/favicon/safari-pinned-tab.svg" color="#000000">
+<meta name="theme-color" content="#ffffff">
+<title>Zirui Xu - Personal Website</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/styles/general.css">
+<link rel="stylesheet" href="/styles/sidebar.css">
+<link rel="stylesheet" href="./styles/figure.css">
+<link rel="stylesheet" href="/styles/text.css">
+</head>
+
+<body>
+
+<nav class="sidebar">
+  <a class="icon-button"><img class="icon-picture" src="/images/favicon/safari-pinned-tab.svg" alt="icon"></a>
+  <a href="/">Home</a>
+  <a href="/research/">Research</a>
+  <a href="/teaching/">Teaching</a>
+  <a class="active-button">Blog</a>
+  <a href="/contact/">Contact</a>
+  <a class="menu-switch" id="menuSwitch">Hide Menu</a>
+</nav>
+
+<main class="main-body">
+  <h1>Merge Sort with C++</h1>
+
+  <section>
+    <h2>Introduction</h2>
+    <p>In this blog post, I will discuss my recent implementation of merge sort using C++ at <a href="https://github.com/ZiruiXu/merge-sort-cpp">https://github.com/ZiruiXu/merge-sort-cpp</a>. Suppose there are \(k\) data files (\(k\geqslant10^4\)), each sorted by timestamp. The numbers of entries in these files add up to \(N\) with \(N\geqslant10^9\), and the fize sizes add up to more than 100 GB. The task is to merge them into a single file, again sorted by timestamp. For best performance, a program cannot simultaneously open more than 100 files. In addition, the (Random Access Memory) RAM is usually 16 GB, significantly less than 100 GB.</p>
+  </section>
+
+  <section>
+    <h2>Algorithm</h2>
+    <p>For this task, I use the min heap or priority queue. The basic idea is to start with a min heap with \(k\) elements, each of which is the first entry from each input file. Then I remove the top (or smallest) element from the heap and write it to the output file. Since all files are already sorted, this top element is guaranteed to be the smallest entry among all entries in all files. Therefore, the output file now contains the correct first entry. Assuming that the top element was from the \(i\)-th file, then I add the second entry of the \(i\)-th file to the heap. After the addition, the top element in the heap is now guaranteed to be the second smallest entry among all entries in all files, so we repeat this procedure until all files have been scanned through.</p>
+
+    <section>
+      <h3>Time complexity</h3>
+      <p>Among the \(k\) files, there are \(N\) entries in total. Each of the \(N\) entries needs to be read, added to the heap, removed from the heap, and written to the output, with time complexity \(O(\log k)\) since the heap contains \(k\) elements. Therefore, the above-mentioned merge sort algorithm has the time complexity \(O(N\log k)\), which is acceptable since downloading and reading all files already have the time complexity \(O(N)\).</p>
+    </section>
+
+    <section>
+      <h3>Customized I/O buffer</h3>
+      <p>Since the input files add up to more than 100 GB in size, it is impossible to read all files into RAM before we start sorting them. Therefore, we must stream all the files while sorting.</p>
+
+      <p>For best performance, we cannot open more than 100 files simultaneously using the default I/O buffer. Therefore, I implement a customized read buffer for each input file, which is essentially a <code class="language-cpp">std::vector&lt;char&gt;</code> with a reserved memory of fixed size \(m_i\) in RAM. Whenever the buffer is empty (meaning that all <code class="language-cpp">char</code>'s from this buffer have been used up by the min heap), then I refill this buffer by opening the \(i\)-th file, reading the next \(m_i\) characters from the \(i\)-th file, and then close the \(i\)-th file after recording the current reading position in the \(i\)-th file. In this way, there won't be multiple files opened simultaneously. Similarly, I use a customized write buffer with a reserved memory of fixed size \(m\) in RAM. Whenever the write buffer is filled up, its content will be written into the output file.</p>
+    </section>
+  </section>
+
+  <section>
+    <h2>Illustration</h2>
+    <p>The algorithm is illustrated as follows. Initially the top entry in each file is added to the min heap via a customized read buffer, and the top element in the min heap is guaranteed to be the smallest entry among all entries in all files. This top element is then removed and written to the output file via a customized write buffer. The next entry of the corresponding file (from which this top element comes) is then added to the heap. Repeat this procedure until all entries in all files are written to the output file.</p>
+
+    <figure class="merge-sort-illustration">
+      <img src="./images/mergeSortIllustration.svg" alt="merge sort illustration">
+    </figure>
+  </section>
+
+  <section>
+    <h2>Optimal buffer sizes</h2>
+    <p>For \(1\leqslant i\leqslant k\), denote the size of the \(i\)-th read buffer as \(m_i\), and denote the size of the write buffer as \(m\). We want to determine the optimal \(m_i\) and \(m\) under the following constraint on the total buffer size:</p>
+    \[ m+\sum_{i=1}^km_i=C, \]
+    <p>where \(C\) is a constant. Assuming that the \(i\)-th file contains \(n_i\) characters, and the output file contains \(n\) characters, then the total number of I/O operations (one operation means reading from
+or writing to a file once) is</p>
+    \[ \frac nm+\sum_{i=1}^k\frac{n_i}{m_i}, \]
+    <p>and we want to minimize this quantity subject to the above constraint. Therefore, I use the Lagrange multiplier method and obtain the following equations for the optimal solution:</p>
+    \[ -\frac n{m^2}=-\frac {n_i}{m_i^2}=\lambda,\quad 1\leqslant i\leqslant k, \]
+    where \(\lambda\) is the Lagrange multiplier for the constraint. Therefore, the optimal \(m\) and \(m_i\) is proportional to \(\sqrt n\) and \(\sqrt{n_i}\), that is
+    \[ m=\frac{C\sqrt n}{\sqrt n+\sum\limits_{i=1}^k\sqrt{n_i}}, \]
+    and
+    \[ m_i=\frac{C\sqrt{n_i}}{\sqrt n+\sum\limits_{i=1}^k\sqrt{n_i}},\quad 1\leqslant i\leqslant k. \]
+    <p>By selecting the above \(m\) and \(m_i\) for the write and read buffer sizes, the total number of I/O operations can be minimized, subject to the constraint on the total buffer size.</p>
+  </section>
+
+  <section>
+    <h2>Code structure</h2>
+    <p>The complete C++ code can be found at <a href="https://github.com/ZiruiXu/merge-sort-cpp">https://github.com/ZiruiXu/merge-sort-cpp</a>. The file structure of my code is as follows.</p>
+
+    <pre><code class="language-treeview">MergeSort/
+|-- Makefile
+|-- Readme.md
+|-- include/
+|   |-- data_entry.hpp
+|   |-- file_reader.hpp
+|   |-- file_writer.hpp
+|   |-- files_merger.hpp
+|   `-- utilities.hpp
+`-- src/
+    |-- data_entry.cpp
+    |-- file_reader.cpp
+    |-- file_writer.cpp
+    |-- files_merger.cpp
+    |-- main.cpp
+    `-- utilities.cpp</code></pre>
+
+    <p>Inside the root directory <code class="language-bash">MergeSort</code>:</p>
+    <ul>
+      <li><code class="language-bash">Makefile</code> compiles the code into an executable program;</li>
+      <li><code class="language-bash">Readme.md</code> is the documentation of the code;</li>
+      <li><code class="language-bash">include</code> contains the header files;</li>
+      <li><code class="language-bash">src</code> contains the C++ implementation.</li>
+    </ul>
+
+    <p>Inside the directories <code class="language-bash">include</code> and <code class="language-bash">src</code>:</p>
+    <ul>
+      <li><code class="language-bash">data_entry</code> contains the data structure for storing the entries in the data files;</li>
+      <li><code class="language-bash">file_reader</code> contains the customized read buffer;</li>
+      <li><code class="language-bash">file_writer</code> contains the customized write buffer;</li>
+      <li><code class="language-bash">files_merger</code> contains the main class for merge-sorting multiple sorted data files;</li>
+      <li><code class="language-bash">utilities</code> contains several helper functions;</li>
+      <li><code class="language-bash">main.cpp</code> contains the main function to invoke other functions.</li>
+    </ul>
+
+    <section>
+      <h3>Module: data_entry</h3>
+      <p>In the <code class="language-bash">data_entry</code> module, I defined the data structure to store each data entry from the input files, and overloaded the comparison operator for this structure for the later sorting stage:</p>
+      <pre><code class="language-cpp">struct DataEntry {
+    // index of the filename
+    filename_index;
+
+    // timestamp and entire entry
+    timestamp, line;
+}
+
+// overloading comparison operator &gt;
+DataEntry::operator&gt;</code></pre>
+    </section>
+
+    <section>
+      <h3>Module: file_reader</h3>
+      <p>In the <code class="language-bash">file_reader</code> module, I defined the read buffer class to store \(n_i\) characters from the \(i\)-th file, and replenish the buffer once all the characters in the buffer are processed.</p>
+      <pre><code class="language-cpp">// read the next line from the buffer
+FileReader::read_line
+
+// replenish the buffer from the input file
+FileReader::refill_buffer</code></pre>
+    </section>
+
+    <section>
+      <h3>Module: file_writer</h3>
+      <p>In the <code class="language-bash">file_writer</code> module, I defined the write buffer in a similar way:</p>
+      <pre><code class="language-cpp">// add a line to the buffer
+FileWriter::write_line
+
+// flush the buffer to the output file
+FileWriter::flush</code></pre>
+    </section>
+
+    <section>
+      <h3>Module: files_merger</h3>
+      <p>The <code class="language-bash">files_merger</code> module is the main module that merge sorts multiple sorted files. It has two public methods after initialization:</p>
+      <pre><code class="language-cpp">// set read and write buffer sizes
+FilesMerger::set_buffer_sizes
+
+// the main method for merge sorting
+FilesMerger::merge_files</code></pre>
+      <p>Meanwhile, this module has four private methods:</p>
+      <pre><code class="language-cpp">// adjust the buffer sizes as needed
+FilesMerger::adjust_buffer_sizes
+
+// initialize read and write buffers
+FilesMerger::initialize_reader_writer
+
+// add the first entry from each file to the heap
+FilesMerger::initialize_heap
+
+// the main loop of using heap to merge sort
+FilesMerger::sort_entries</code></pre>
+    </section>
+
+    <section>
+      <h3>Main function</h3>
+      <p>The <code class="language-cpp">main</code> function invokes the <code class="language-bash">files_merger</code> module to merge sort all files in the input directory. It receives 5 parameters:</p>
+      <ul>
+        <li>input files path (default value <code class="language-cpp">"./data/*.txt"</code>);</li>
+        <li>output file path (default value <code class="language-cpp">"./MergedFile.txt"</code>);</li>
+        <li>read buffer size (default value is automatic);</li>
+        <li>write buffer size (default value is automatic);</li>
+        <li>total buffer size \(C\) (default value is <code class="language-cpp">101000000</code>).</li>
+      </ul>
+    </section>
+
+  </section>
+
+  <section>
+    <h2>Usage</h2>
+    <section>
+      <h3>Compile the code</h3>
+      <p>Type <code class="language-bash">make</code> or the following command in the root directory:</p>
+      <pre><code class="language-bash">g++ -I include -std=c++17 -o MergeSort src/*.cpp -lstdc++fs</code></pre>
+    </section>
+
+    <section>
+      <h3>Execute the program</h3>
+      <p>Type the following command to execute the program with the default paths and buffer sizes:</p>
+      <pre><code class="language-bash">./MergeSort</code></pre>
+      <p>Type the following command to specify file paths (note that only one input file path needs to be provided, because the program will automatically search for all other input files in the same directory with the same extension):</p>
+      <pre><code class="language-bash">./MergeSort ./myData/input1.txt ./output.txt</code></pre>
+      <p>Type the following command to specify 10,000 bytes as both the read buffer size and the write buffer size:</p>
+      <pre><code class="language-bash">./MergeSort ./myData/input1.txt ./output.txt 10000</code></pre>
+      <p>Type the following command to specify 10,000 bytes as the read buffer size, and 20,000 bytes as the write buffer size:</p>
+      <pre><code class="language-bash">./MergeSort ./myData/input1.txt ./output.txt 10000 20000</code></pre>
+      <p>Type the following command to specify 1,000,000 bytes as the total buffer size \(C\), and let the program automatically determine the read and write buffer sizes:</p>
+      <pre><code class="language-bash">./MergeSort ./myData/input1.txt ./output.txt 0 0 1000000</code></pre>
+      <p>The default total buffer size \(C\) is 101,000,000 bytes, or about 100 MB. If more than 100 MB of RAM is available, then setting a larger total buffer size \(C\) can reciprocally reduce the number of I/O operations, thus reducing the running time.</p>
+    </section>
+
+  </section>
+
+  <section>
+    <h2>Potential improvements</h2>
+    <p>The current algorithm closes a file immediately after reading from it into a customized read buffer. Although this is necessary due to the constraint on the number of files that can be simultaneously open by a program, it is not optimal. The reason is that the operation system may have some underlying caching mechanism that facilitates reading a large volume of data from the same file. If we close the file immediately after reading a fixed amount of data from it, then the cache in the operation system may be wasted.</p>
+
+    <p>It may be a good idea to merge at most 99 data files at a time, and therefore we can keep the 99 input files open. After merging all files in groups of at most 99, we then merge the output files, again, in groups of at most 99. However, it is better to make sure that the input files during each merge have similar sizes. Therefore, in the case of a single thread, we can keep selecting the 99 files that have the smallest sizes (including the output files from previous merges).</p>
+
+  </section>
+
+</main>
+
+<script src="/scripts/hideMenu.js"></script>
+<script src="/scripts/loadKatex.js"></script>
+<script src="/scripts/loadPrism.js" data-plugins="treeview"></script>
+
+</body>
+</html>

@@ -1,0 +1,7 @@
+cd ~/Desktop; zip -r PersonalWebsite.zip PersonalWebsite; cd PersonalWebsite;
+sleep 2;
+git init; git add *; git commit -m "Initial commit";
+git remote add origin git@github.com:ZiruiXu/ZiruiXu.github.io.git;
+git push -u origin master;
+sleep 2;
+cd ..; yes | rm -r PersonalWebsite; unzip PersonalWebsite;

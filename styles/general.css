@@ -1,0 +1,34 @@
+body {
+  background-color: white;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 100%;
+  margin: 0em;
+}
+
+.main-body {
+  padding: 1em 4em 10em 14em;
+}
+
+h1 {font-size: 2em;}
+h2 {font-size: 1.549193338482967em;}
+h3 {font-size: 1.2em;}
+h4 {font-size: 0.92951600308978em;}
+body {font-size: 1.2em;}
+
+@media (max-width: 55em) {
+  h1 {font-size: 1.833333333333333em;}
+  h2 {font-size: 1.420093893609387em;}
+  h3 {font-size: 1.1em;}
+  h4 {font-size: 0.852056336165632em;}
+  body {font-size: 1.1em;}
+  .main-body {padding: 1em 2em 10em 2em;}
+}
+
+@media (max-width: 35em) {
+  h1 {font-size: 1.666666666666667em;}
+  h2 {font-size: 1.290994448735806em;}
+  h3 {font-size: 1em;}
+  h4 {font-size: 0.7745966692414834em;}
+  body {font-size: 1em;}
+  .main-body {padding: 1em 1em 10em 1em;}
+}

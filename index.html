@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png">
+<link rel="manifest" href="/images/favicon/site.webmanifest">
+<link rel="mask-icon" href="/images/favicon/safari-pinned-tab.svg" color="#000000">
+<meta name="theme-color" content="#ffffff">
+<title>Zirui Xu - Personal Website</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/styles/general.css">
+<link rel="stylesheet" href="/styles/sidebar.css">
+<link rel="stylesheet" href="./styles/home.css">
+</head>
+
+<body>
+
+<nav class="sidebar">
+  <a class="icon-button"><img class="icon-picture" src="/images/favicon/safari-pinned-tab.svg" alt="icon"></a>
+  <a class="active-button">Home</a>
+  <a href="/research/">Research</a>
+  <a href="/teaching/">Teaching</a>
+  <a href="/blog/">Blog</a>
+  <a href="/contact/">Contact</a>
+  <a class="menu-switch" id="menuSwitch">Hide Menu</a>
+</nav>
+
+<main class="main-body">
+  <img class="profile-picture" src="./images/Zirui-Xu-profile-picture.jpg" alt="profile picture of Zirui Xu">
+  <h1>Zirui Xu</h1>
+
+  <section>
+    <h2>About Me</h2>
+    <p>Welcome to my personal website!</p>
+    <p>I am a Ph.D. candidate in Applied Mathematics at <a href="https://www.columbia.edu">Columbia University</a>. My Ph.D. advisor is Professor <a href="https://www.columbia.edu/~qd2125/">Qiang Du</a>.</p>
+    <p>My past research has been focused on the intersection of calculus of variations, partial differential equations, optimization, and high performance computing, with applications to pattern formation phenomena observed in many material, physical, and biological systems at the microscopic scale. I also have research experience in fractional derivatives and the associated stochastic processes. Moreover, I have recently developed an interest in machine learning and its applications to partial differential equations, traffic flow, and finance.</p>
+  </section>
+
+  <section>
+    <h2>Education</h2>
+    <ul>
+      <li>
+        <p><b>Columbia University</b>, Fu Foundation School of Engineering and Applied Science.</p>
+        <p>Ph.D. in Applied Mathematics, Sep 2018 &ndash; Aug 2024.</p>
+      </li>
+      <li>
+        <p><b>Peking University</b>, School of Mathematical Sciences.</p>
+        <p>B.Sc. in Computational Mathematics, Sep 2014 &ndash; Jul 2018.</p>
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Document</h2>
+      <p>
+        Here is my <a href="./attachments/CV.pdf">Curriculum Vitae</a> (<span id="fileSize"></span>).
+      </p>
+  </section>
+
+</main>
+
+<script src="/scripts/hideMenu.js"></script>
+<script src="./scripts/fileSizeCV.js"></script>
+
+</body>
+</html>

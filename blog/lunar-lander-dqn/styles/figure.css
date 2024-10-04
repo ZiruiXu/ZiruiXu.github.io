@@ -1,0 +1,147 @@
+html, body {
+  overflow-x: hidden;
+}
+
+figure.Masten-lunar-lander-image {
+  margin: 0em;
+  max-width: 31.25em;
+}
+
+figure.Masten-lunar-lander-image figcaption {
+  font-size: 0.85em;
+}
+
+figure.Masten-lunar-lander-image img, figure.artificial-neuron-illustration img, figure.LeakyReLU-plot img {
+  width: 100%;
+}
+
+figure.artificial-neuron-illustration {
+  margin: 0em;
+  max-width: 16em;
+  display: inline-block;
+}
+
+figure.LeakyReLU-plot {
+  margin: 0em;
+  max-width: 14em;
+  display: inline-block;
+}
+
+figure.neural-net-visualization {
+  margin: 1em -1em 0em;
+  max-width: 32em;
+}
+
+.training-results {
+  display: flex;
+}
+
+figure.training-rewards-curve {
+  margin: 1em 0em 1em -2.5em;
+  flex: 0 0 27em;
+  height: 22.5em;
+}
+
+.training-episodes-render {
+  margin-right: -3em;
+  flex: 1;
+  max-width: 36em;
+  min-width: 26em;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+figure.training-episode-render {
+  margin: 0.3em;
+  width: 9.5625em;
+  vertical-align: bottom;
+}
+
+figure.training-episode-render figcaption {
+  text-align: center;
+  font-size: 0.85em;
+  font-weight: bold;
+}
+
+figure.training-episode-render img {
+  width: 9.5625em;
+  height: 6.375em;
+}
+
+@media (max-width: 71.8em) {
+
+  .training-results {
+    margin-right: -2.5em;
+    display: unset;
+  }
+
+  figure.training-rewards-curve {
+    margin-right: -5em;
+    flex: unset;
+    max-width: 27em;
+    height: unset;
+  }
+
+  .training-episodes-render {
+    margin-left: -2.5em;
+    flex: unset;
+    max-width: 46em;
+  }
+
+}
+
+@media (max-width: 55em) {
+
+  figure.training-rewards-curve {
+    margin-left: -1em;
+    margin-right: -1em;
+  }
+
+  .training-episodes-render {
+    margin-left: -1.25em;
+    margin-right: -1em;
+  }
+
+}
+
+
+@media (max-width: 40em) {
+
+  .training-episodes-render {
+    margin-right: -4em;
+  }
+
+}
+
+
+@media (max-width: 35em) {
+
+  .rotate-for-narrow-screen {
+    transform: rotate(90deg);
+  }
+
+  .training-episodes-render {
+    margin-left: -0.75em;
+    margin-right: -0.75em;
+    max-width: unset;
+    min-width: unset;
+    display: grid;
+    flex-wrap: unset;
+    align-items: end;
+    justify-items: center;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  figure.training-episode-render {
+    margin: 0.2em;
+    width: unset;
+    max-width: 10.625em;
+  }
+
+  figure.training-episode-render img {
+    width: 100%;
+    height: unset;
+  }
+
+}

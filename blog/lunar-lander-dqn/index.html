@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png">
+<link rel="manifest" href="/images/favicon/site.webmanifest">
+<link rel="mask-icon" href="/images/favicon/safari-pinned-tab.svg" color="#000000">
+<meta name="theme-color" content="#ffffff">
+<title>Zirui Xu - Personal Website</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/styles/general.css">
+<link rel="stylesheet" href="/styles/sidebar.css">
+<link rel="stylesheet" href="./styles/figure.css">
+<link rel="stylesheet" href="./styles/text.css">
+</head>
+
+<body>
+
+<nav class="sidebar">
+  <a class="icon-button"><img class="icon-picture" src="/images/favicon/safari-pinned-tab.svg" alt="icon"></a>
+  <a href="/">Home</a>
+  <a href="/research/">Research</a>
+  <a href="/teaching/">Teaching</a>
+  <a class="active-button">Blog</a>
+  <a href="/contact/">Contact</a>
+  <a class="menu-switch" id="menuSwitch">Hide Menu</a>
+</nav>
+
+<main class="main-body">
+  <h1>DQN for Lunar Lander</h1>
+
+  <figure class="Masten-lunar-lander-image">
+    <img src="./images/MastenLunarLander.jpg" alt="Masten lunar lander">
+    <figcaption>Vertical landing on the Moon. Image credit: <a href="https://masten.aero/wp-content/uploads/2022/01/masten-xelene-landing-moon.jpg">Masten Space Systems</a>
+    </figcaption>
+  </figure>
+
+  <section>
+    <h2>Introduction</h2>
+    <p>In this blog post, I will discuss my recent implementation of deep Q-learning for the lunar landing environment at <a href="https://github.com/ZiruiXu/lunar-lander-dqn">https://github.com/ZiruiXu/lunar-lander-dqn</a>. As a variant of Q-learning, deep Q-learning is an important type of reinforcement learning algorithms. To understand deep Q-learning, we need to first understand its predecessor Q-learning.</p>
+  </section>
+
+  <section>
+    <h2>Q-learning</h2>
+    <p>In the paradigm of reinforcement learning, the agent starts at the initial state \(S_0\), and takes an action \(A_0\); the environment then gives the agent a reward \(R_0\), and updates the agent's state to \(S_1\); the agent repeats the above procedure until termination by the environment. For example, if the lunar lander has crashed or successfully landed, then the environment terminates this episode.</p>
+
+    <p>Q-learning is a traditional reinforcement learning algorithm where an agent tries to maximize the total reward its receives. It interacts with the environment through trial and error, observes the states \(\{S_i\}\) and rewards \(\{R_i\}\), and gradually learns which action to take at which state. The environment can be either deterministic or stochastic, and if it is stochastic, the agent tries to maximize the expected total reward. For simplicity, we focus on the deterministic environment for now.</p>
+
+    <section>
+      <h3>Q-value function</h3>
+
+      <p>The core idea behind Q-learning is the Q-value, which is a function \(Q(S,A)\) of the state \(S\) and action \(A\), measuring the quality of the action \(A\) at the state \(S\). For example, if the lunar lander is in a rapidly descending state, then firing the main engine has a larger Q-value than firing the left/right engine or doing nothing.</p>
+
+      <p>Similar to dynamical programming, we assume the Markov property of the environment, and define \(Q(S,A)\) as the best possible outcome starting at the state \(S\) and taking the very first action \(A\). The word "outcome" refers to the sum of all the rewards starting at \(S\) onward. In practice, we use a weighted sum with the weights geometrically decaying:</p>
+
+      <div class="scrollable">
+        \[ Q(S,A)=\max_{\{A_i\}}\;\{\;\sum_{i=0}^\infty \gamma^i R_i:\;\; S_0=S,\;\; A_0=A\;\}, \]
+      </div>
+
+      <p>where \(R_i=R(S_i,A_i)\) is the reward at the \(i\)-th step, and \(\gamma\in(0,1)\) ensures the convergence of the summation as long as \(R\) is bounded. We usually take \(\gamma\approx1\) (e.g., \(0.99\)) for the agent to focus on the long run. Note that we are using the convention that \(R_i=0\) after the termination.</p>
+
+    </section>
+
+    <section>
+      <h3>Temporal difference (TD)</h3>
+
+      <p>We know that the true Q-value function should satisfy the following equation:</p>
+
+      <div class="scrollable">
+        \[ Q(S,A)=R(S,A)+\gamma \max_{A'}Q(S',A'), \]
+      </div>
+
+      <p>where \(S'\) is the next state after taking the action \(A\) at the current state \(S\). This equation is a direct consequence of the Markov property and the definition of \(Q(S,A)\).</p>
+
+      <p>Similar to the method of successive over-relaxation (SOR) in numerical linear algebra, which is a generalization of the Gauss&ndash;Seidel method, we numerically compute the Q-value through iterations, that is</p>
+
+      <div class="scrollable">
+        \[ Q(S,A) \leftarrow (1\!-\!\alpha)Q(S,A) + \alpha\big(R(S,A)+\gamma \max_{A'}Q(S',A')\big), \]
+      </div>
+
+      <p>where \(\alpha\in(0,2)\) is called the relaxation factor or learning rate. The above iterative scheme is called the temporal difference (TD) update rule, which is applied at each step during the agent's training phase.</p>
+
+    </section>
+
+    <section>
+      <h3>Q-table and \(\varepsilon\)-greedy policy</h3>
+
+      <p>Assuming that there are finite numbers of possible states and actions, then we can store the function \(Q(S,A)\) as a table or matrix, with each row representing a state, and each column representing an action. Such a table is called the Q-table, and it reflects the agent's current knowledge of the quality/value of any action at any given state. If the agent has the exactly correct Q-table, then it can search the Q-table for the row representing its current state, and then select the action that has the highest Q-value in that row. In this way, the agent can maximize its total reward onward.</p>
+
+      <p>However, if the agent has not been fully trained yet, and its Q-table is not truly correct, then the action that has the highest value in the row may not yield the best outcome. In that case, the agent should explore other actions apart from the action that has the highest value in the row. We can use a simple method called the \(\varepsilon\)-greedy policy, that is, with probability \(\varepsilon\) we pick a random action, and with probability \(1\!-\!\varepsilon\) we select the action that has the highest value in the row. After taking this action, we update the Q-table as described above and repeat this procedure until the Q-table converges to an acceptable level of accuracy.</p>
+
+    </section>
+
+  </section>
+
+  <section>
+    <h2>Deep Q-learning</h2>
+
+    <p>Deep Q-learning is an important extension of the Q-learning by incorporating the capabilities of the deep neural networks. In the traditional Q-learning described above, we use a Q-table to keep track of the Q-values of each state-action pair. However, if there are too many possible states or even a continuum of states (like the position and velocity of the lunar lander), then the Q-table grows infeasibly large. Therefore, we can use a deep neural network which is known to be able to fit high-dimensional functions using data.</p>
+
+    <section>
+      <h3>Artificial neuron</h3>
+      <p>The basic unit in the neural network is called a neuron or a node, which is represented below by the rightmost <span class="deep-purple">purple</span> solid circle with some arrows. It takes several inputs (e.g., \(x_1,x_2,x_3\)) from the inward arrows (representing the data or the outputs of other neurons, or both), and produces an output \(y\) to the outward arrow. Each neuron/node is essentially a multivariable nonlinear function with tunable parameters (e.g., \(\omega_1,\omega_2,\omega_3,b\)). It first calculates a linear combination of the input \(z=\omega_1 x_1+\omega_2 x_2+\omega_3 x_3+b\), and then compose it with a nonlinear function \(f\) called the activation function. This design ensures that the output is a nonlinear function of the input, and that every input is taken into account with simple partial derivatives (which is useful for the later optimization). The nonlinearity of \(f\) is essential, since many functions in real applications are nonlinear. There are many choices of the nonlinear function \(f\). The one that I used is called the leaky relu function as shown below. It has a non-zero (and not close to zero) derivative (except at the origin), which helps mitigate the notorious vanishing gradient problem common in deep neural networks.</p>
+
+      <figure class="artificial-neuron-illustration">
+        <img src="./images/Neuron.svg" alt="artificial neuron">
+      </figure>
+
+      <figure class="LeakyReLU-plot">
+        <img src="./images/LeakyReLU.svg" alt="LeakyReLU function">
+      </figure>
+
+    </section>
+
+
+    <section>
+      <h3>Neural network</h3>
+
+      <p>In deep Q-learning, a neural network is used in place of the Q-table to approximate the Q-value function. Its input is a state, and its output is the Q-value for each action at that state. In the 2-D lunar landing environment, each state is an 8-dimensional vector, representing the \(x\) and \(y\) positions and velocities, the angle and angular velocity, and two booleans that represent whether the left and right legs are in contact with the ground or not; there are four possible actions: firing the main/left/right engine or doing nothing.</p>
+
+      <p>Therefore, the input layer has 9 nodes (including a node representing constant 1), and the output layer has 4 nodes. I placed two hidden layers between the input and output layers: the first and second hidden layers have 513 and 257 nodes (both including a node representing constant 1), respectively. This choice of the network architecture is heuristic, and there are many studies analyzing which kind of architectures are suitable for which scenarios. In our case, since we do not know the interplay between different quantities such as the positions and velocities, we fully connect consecutive layers. The neural network that I used is visualized below. Each <span class="deep-purple">purple</span> solid circle represents a node/neuron, and each line segment represents a weight coefficient \(w_j\) (or the constant term \(b\)) of a neuron.</p>
+
+    <figure class="neural-net-visualization">
+      <img class="rotate-for-narrow-screen" src="./images/NeuralNet.svg" alt="neural network architecture">
+    </figure>
+
+    </section>
+
+    <section>
+      <h3>Target Q-network</h3>
+      <p>A target Q-network is often used to stabilize the training process. The target Q-network is a fixed copy of our current Q-network, and is used to provide the target value for minimizing the following squared error loss function:</p>
+
+      <div class="scrollable">
+        \[ \big(R(S,A)+\gamma \max_{A'}Q_t(S',A')-Q(S,A)\big)^2, \]
+      </div>
+
+      <p>where \(Q_t\) represents the output of the target Q-network, and \(Q\) represents the output of the current Q-network. As the training progresses, the current Q-network is updated at each step, while the target Q-network stays the same for a long time. After many steps (e.g., every 1000 steps), the target Q-network is updated by copying the current Q-network.</p>
+
+      <p>A common explanation for the need of a target Q-network is an analogy like "a dog chasing its own tail&mdash;it will never catch it because the target is moving". Indeed, if we use \(Q(S',A')\) in place of \(Q_t(S',A')\) in the above expression, then the target value depends on the current Q-network which is indeed constantly "moving". However, in my opinion, this analogy oversimplifies the real issue. The moving target itself is not the primary concern. In fact, deep Q-learning with and without a target Q-network is very similar to the Jacobi method and the Gauss&ndash;Seidel method in numerical linear algebra, respectively. The Gauss&ndash;Seidel method also creates a moving target by using the most recently updated variables. Yet, Gauss&ndash;Seidel is known to typically converge faster and be more stable than Jacobi.</p>
+
+      <p>Furthermore, in the traditional Q-learning using the Q-table, there was no need for a target Q-table. Therefore, the root cause is the introduction of a neural network. In a traditional Q-table, each step updates a specific Q-value directly without affecting other entries in the same table. However, with a neural network, updates are less precise because the entire network weights are changed by the gradient descent. While each update is meant to change only a single Q-value, it inevitably affects other Q-values in a less meaningful manner due to the changes in the entire network weights.</p>
+
+      <p>Therefore, we can think of using a target Q-network as creating a fixed copy of the current Q-table, and then training the neural network over many steps to approximate the desired target Q-table, before an updated Q-table is provided as the new target. This approach mitigates the less meaningful, global effect of every single update, allowing for more stable learning.</p>
+
+    </section>
+
+    <section>
+      <h3>Experience replay</h3>
+      <p>Another technique to improve the learning stability is experience replay. It uses a memory buffer to store the agent's past experiences \(\big\{(S_i,A_i,R_i,S_{i+1})\big\}\). At each step of training the Q-network, we not only use the most recent experience, but also randomly select a number of past experiences from the memory buffer. This is because the agent's experiences are inevitably correlated, i.e., the next state depends on the previous state and action. Such correlation is known to jeopardize the stochastic gradient descent during the training. By randomly sampling from a wide range of past experiences, the correlation is mitigated, leading to more stable training.</p>
+    </section>
+
+  </section>
+
+  <section>
+    <h2>Implementation</h2>
+    <p>I use the Keras package in Python 3 to implement the deep Q-network. The algorithm is described as follows:</p>
+
+    <ul>
+      <li>initialize the current Q-network \(Q\) with random weights;</li>
+      <li>copy \(Q\) to the target Q-network \(Q_t\);</li>
+      <li>Initialize \(\varepsilon=1\);</li>
+      <li>for each episode during training:</li>
+      <li>initialize the environment with an initial state \(S_0\);</li>
+      <li>for each step \(i = 0,1,2,\cdots\) in the episode:
+      <li>choose an action based on the \(\varepsilon\)-greedy policy, i.e.,</li>
+      <li>with probability \(\varepsilon\) pick a random action \(A_i\);</li>
+      <li>with probability \(1\!-\!\varepsilon\) select the following action:</li>
+      <div class="scrollable">
+      \[ A_i=\argmax_A\{Q(S_i,A)\}; \]
+      </div>
+      <li>carry out the action \(A_i\), receive the reward \(R_i\), and observe the next state \(S_{i+1}\);</li>
+      <li>store the current experience \((S_i,A_i,R_i,S_{i+1})\) in the memory buffer;</li>
+      <li>from the memory buffer draw a random sample of past experiences to use as a minibatch for training;</li>
+      <li>compute the following mean squared error over all \(j\)'s in the minibatch:</li>
+      <div class="scrollable">
+        \[ \sum_j\big(R_j+\gamma \max_{A}Q_t(S_{j+1},A)-Q(S_j,A_j)\big)^2, \]
+      </div>
+      <li>use gradient descent to update \(Q\);</li>
+      <li>repeat until termination of the episode;</li>
+      <li>decrease \(\varepsilon\) as needed;</li>
+      <li>occasionally copy \(Q\) to \(Q_t\);</li>
+      <li>repeat until finishing all training episodes;</li>
+      <li>return \(Q\).</li>
+    </ul>
+
+    <p>The complete Python code can be found at <a href="https://github.com/ZiruiXu/lunar-lander-dqn">https://github.com/ZiruiXu/lunar-lander-dqn</a>.</p>
+
+  </section>
+
+  <section>
+    <h2>Training results</h2>
+
+    <p>The training rewards are visualized below. Each <span class="orange">orange</span> dot represents an episode. The horizontal axis is the index of the episode. The vertical axis is the the total reward, i.e., the sum of all rewards received during that episode, without being discounted by \(\gamma\). We can see that initially the agent received negative total rewards at around -400 to -100, indicating that the lunar lander was crashed. From the animation of the 1st and 25th episodes <span class="dark-purple">A</span> and <span class="dark-purple">B</span> we can see that the lunar lander was indeed crashed, although the crash in <span class="dark-purple">B</span> wasn't as bad as <span class="dark-purple">A</span>. In the 100th and 400th episodes <span class="dark-purple">C</span> and <span class="dark-purple">D</span>, the agent had learned to fire the main engine to avoid descending too fast, and to occasionally fire the left and right engines to keep balance, but it did not land between the two flags. In the 1225th episode <span class="dark-purple">E</span>, the agent landed perfectly between the two flags. In the 2025th, 6400th and 10000th episodes <span class="dark-purple">F</span>, <span class="dark-purple">G</span> and <span class="dark-purple">H</span>, the agent learned how to land faster and faster.</p>
+
+    <div class="training-results">
+
+      <figure class="training-rewards-curve">
+        <img class="rotate-for-narrow-screen" src="./images/Reward.svg" alt="training rewards">
+      </figure>
+
+      <div class="training-episodes-render">
+
+        <figure class="training-episode-render">
+          <figcaption>A: crashed badly</figcaption>
+          <img src="./images/E00001.gif" alt="episode 1">
+        </figure>
+
+        <figure class="training-episode-render">
+          <figcaption>B: crashed less badly</figcaption>
+          <img src="./images/E00025.gif" alt="episode 25">
+        </figure>
+
+        <figure class="training-episode-render">
+          <figcaption>C: kept good balance</figcaption>
+          <img src="./images/E00100.gif" alt="episode 100">
+        </figure>
+
+        <figure class="training-episode-render">
+          <figcaption>D: descended steadily</figcaption>
+          <img src="./images/E00400.gif" alt="episode 400">
+        </figure>
+
+        <figure class="training-episode-render">
+          <figcaption>E: landed on the pad</figcaption>
+          <img src="./images/E01225.gif" alt="episode 1225">
+        </figure>
+
+        <figure class="training-episode-render">
+          <figcaption>F: landed faster</figcaption>
+          <img src="./images/E02025.gif" alt="episode 2025">
+        </figure>
+
+        <figure class="training-episode-render">
+          <figcaption>G: landed even faster</figcaption>
+          <img src="./images/E06400.gif" alt="episode 6400">
+        </figure>
+
+        <figure class="training-episode-render">
+          <figcaption>H: landed fastest</figcaption>
+          <img src="./images/E10000.gif" alt="episode 10000">
+        </figure>
+
+      </div>
+
+    </div>
+
+    <p>According to OpenAI's <a href="https://gymnasium.farama.org/environments/box2d/lunar_lander/">Gymnasium Documentation</a>, "an episode is considered a solution if it scores at least 200 points". As shown above, the agent consistently received scores between 235 and 325 in the later stages, indicating that deep Q-learning performed very well for this reinforcement learning task.</p>
+
+  </section>
+</main>
+
+<script src="/scripts/hideMenu.js"></script>
+<script src="./scripts/rotateFigures.js"></script>
+<script src="/scripts/loadKatex.js"></script>
+
+</body>
+</html>

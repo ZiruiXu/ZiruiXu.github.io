@@ -1,0 +1,86 @@
+.sidebar {
+  margin: 0em;
+  padding: 0em;
+  width: 10em;
+  background-color: #f1f1f1;
+  position: fixed;
+  height: 100%;
+  overflow: auto;
+}
+
+.sidebar a {
+  display: block;
+  padding: 1em;
+  width: 100%;
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.sidebar a.active-button {
+  background-color: black;
+  color: white;
+  cursor: auto;
+}
+
+.sidebar a.icon-button {
+  padding: 0.5em 0.5em 0.5em 1em;
+  cursor: auto;
+}
+
+.sidebar a.menu-switch {
+  display: none;
+}
+
+.sidebar a:not(.active-button):not(.icon-button):hover {
+  background-color: #a0a0a0;
+}
+
+.sidebar a:not(.active-button):not(.icon-button):active {
+  background-color: #505050;
+  color: white;
+}
+
+.icon-picture {
+  width: 2em;
+  height: 2em;
+  display: block;
+}
+
+@media (max-width: 55em) {
+  .sidebar {
+    width: 100%;
+    position: static;
+  }
+  .sidebar a {
+    width: unset;
+    float: left;
+  }
+  .sidebar a.icon-button {
+    padding: 0.5em 0.3em;
+  }
+  .icon-picture {
+    width: 1.5em;
+  }
+}
+
+@media (max-width: 35em) {
+  .sidebar a {
+    padding: 0.5em 0em;
+    float: none;
+    text-align: center;
+  }
+  .sidebar a.menu-switch {
+    display: block;
+  }
+  .sidebar.collapsed a:not(.menu-switch):not(.icon-button) {
+    display: none;
+  }
+  .sidebar a.icon-button {
+    padding: 0.1em 0em;
+  }
+  .icon-picture {
+    height: 1.2em;
+    margin: 0em auto;
+  }
+}

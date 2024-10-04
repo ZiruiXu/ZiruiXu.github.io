@@ -1,0 +1,7 @@
+.katex .frac-line {
+  border-bottom-width: 0.07em !important;
+}
+
+.token.treeview-part .entry-name.ext-hpp:before {
+  content: "\ea07";
+}

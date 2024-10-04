@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png">
+<link rel="manifest" href="/images/favicon/site.webmanifest">
+<link rel="mask-icon" href="/images/favicon/safari-pinned-tab.svg" color="#000000">
+<meta name="theme-color" content="#ffffff">
+<title>Zirui Xu - Personal Website</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/styles/general.css">
+<link rel="stylesheet" href="/styles/sidebar.css">
+<link rel="stylesheet" href="./styles/publication.css">
+</head>
+
+<body>
+
+<nav class="sidebar">
+  <a class="icon-button"><img class="icon-picture" src="/images/favicon/safari-pinned-tab.svg" alt="icon"></a>
+  <a href="/">Home</a>
+  <a class="active-button">Research</a>
+  <a href="/teaching/">Teaching</a>
+  <a href="/blog/">Blog</a>
+  <a href="/contact/">Contact</a>
+  <a class="menu-switch" id="menuSwitch">Hide Menu</a>
+</nav>
+
+<main class="main-body">
+  <h1>Research Experience</h1>
+  <section>
+    <h2>Topics</h2>
+    <section>
+      <h3>Ohta&ndash;Kawasaki Energy</h3>
+      <p>My past research has been focused on the Ohta&ndash;Kawasaki energy, which is an elegant mathematical model of pattern formation phenomena observed in a wide range of material, physical, and biological systems at the microscopic scale. At such a microscale, many particles interact with each other via both short-range forces and long-range forces. The short-range and long-range forces compete with each other in the sense that they promote different behaviors of the particles, thus giving rise to intricate and often periodic patterns in the system. Self-consistent mean-field theory is the standard approximation technique to simplify such a many-body problem, and the Ohta&ndash;Kawasaki energy was derived as a further approximation to the self-consistent mean-field theory.<br><br>
+
+From a mathematical point of view, the Ohta&ndash;Kawasaki energy is just the classical isoperimetric problem with an additional nonlocal term (this nonlocal term can be interpreted as the electrostatic potential energy). Despite its seeming simplicity, its minimization is non-trivial, and the minimizers tend to display intricate and somewhat periodic patterns. In order to study those complicated geometries of energy minimizers, I have conducted extensive numerical simulations by leveraging the modern computing power and efficient algorithms. While numerical results can give us helpful guidance, they do not cover the limiting cases because of the finite floating-point precision of computers and the finite resolution of numerical discretization. To overcome such limitations, I have carried out asymptotic analysis in the limiting cases using the method of matched asymptotic expansions. Together, the numerical results and asymptotic results are able to provide us deep insights into this problem.<br><br>
+
+This research topic lies in the intersection of calculus of variations, partial differential equations, optimization, and high performance computing.</p>
+    </section>
+
+    <section>
+      <h3>Fractional Derivatives</h3>
+      <p>I have also conducted research on a censored fractional derivative and the associated stochastic process. Our work shows that the solution to the initial value problem (of such a censored fractional derivative) has a representation similar to the Feynman&ndash;Kac formula. Using such a representation, we are able to solve the relaxation equation and thus the exit problem, thereby establishing the connection between this stochastic process and a new type of fractional diffusion.</p>
+    </section>
+  </section>
+
+  <section class="section-publication">
+    <h2>Publications</h2>
+    <p>In some publications, authors are listed in alphabetical order.</p>
+    <ol reversed>
+      <h3>Peer-Reviewed Articles</h3>
+      <li>Qiang Du, James M. Scott, Zirui Xu. <a href="https://doi.org/10.1016/j.na.2024.113665">Ohta&ndash;Kawasaki energy for amphiphiles: asymptotics and phase-field simulations</a>. <i>Nonlinear Analysis</i> <b>250</b>: 113665 (2025).</li>
+      <li>Zirui Xu, Qiang Du. <a href="https://doi.org/10.1063/5.0148456">Bifurcation and fission in the liquid drop model: a phase-field approach</a>. <i>Journal of Mathematical Physics</i> <b>64</b>(7): 071508 (2023).</li>
+      <li>Zirui Xu, Qiang Du. <a href="https://doi.org/10.1007/s00332-022-09814-9">On the ternary Ohta&ndash;Kawasaki free energy and its one-dimensional global minimizers</a>. <i>Journal of Nonlinear Science</i> <b>32</b>(5): 61 (2022).</li>
+      <li>Qiang Du, Lorenzo Toniazzi, Zirui Xu. <a href="https://doi.org/10.1515/fca-2021-0045">Censored stable subordinators and fractional derivatives</a>. <i>Fractional Calculus and Applied Analysis</i> <b>24</b>(4): 1035&ndash;1068 (2021).</li>
+      <li>Yucen Han, Zirui Xu, An-Chang Shi, Lei Zhang. <a href="https://doi.org/10.1039/c9sm01983a">Pathways connecting two opposed bilayers with a fusion pore: a molecularly-informed phase field approach</a>. <i>Soft Matter</i> <b>16</b>(2): 366&ndash;374 (2020).</li>
+    </ol>
+    <ol reversed>
+      <h3>Data Sets</h3>
+      <li>Qiang Du, James M. Scott, Zirui Xu. <a href="https://doi.org/10.17605/OSF.IO/U2896">Degenerate Ohta&ndash;Kawasaki energy for amphiphiles</a>. <i>Open Science Framework</i> (2024).</li>
+      <li>Zirui Xu, Qiang Du. <a href="https://doi.org/10.17605/OSF.IO/76TDW">Numerics of Liquid Drop Model</a>. <i>Open Science Framework</i> (2023).</li>
+    </ol>
+  </section>
+</main>
+
+<script src="/scripts/hideMenu.js"></script>
+
+</body>
+</html>
