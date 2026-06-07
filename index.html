@@ -3,7 +3,15 @@
 <html>
 <head>
   <script>
-    window.location.replace('https://ZiruiXuPhD.github.io' + window.location.pathname + window.location.search + window.location.hash);
+    (function() {
+      const url = 'https://ZiruiXuPhD.github.io' + window.location.pathname + window.location.search + window.location.hash;
+      document.querySelector('body').innerHTML = `
+      <p>
+      You are being redirected to <a href="${url}">${url}</a><br>
+      If you are not redirected automatically, <a href="${url}">click here</a>
+      </p>
+      `;
+      window.location.replace(url);})();
   </script>
 </head>
 <body>
