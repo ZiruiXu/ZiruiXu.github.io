@@ -31,8 +31,7 @@
     (function() {
       const url = 'https://ZiruiXuPhD.github.io'+window.location.pathname+window.location.search+window.location.hash;
       const placeholder = document.getElementById('placeholder');
-      placeholder.textContent = url;
-      placeholder.href = url;
+      placeholder.href = placeholder.textContent = url;
     })();
   </script>
 
