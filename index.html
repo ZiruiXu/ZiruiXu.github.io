@@ -1,18 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script>
+    window.location.replace('https://ZiruiXuPhD.github.io'+window.location.pathname+window.location.search+window.location.hash);
+  </script>
+  <noscript>
+    <meta http-equiv="refresh" content="3; url=https://ZiruiXuPhD.github.io">
+  </noscript>
+  <title>Redirecting...</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background-color: white;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 100%;
+      margin: 1em;
+    }
+    a {word-break: break-all;}
+  </style>
 </head>
+
 <body>
+  <p>
+    You are being redirected to<br>
+    <a id="placeholder" href="https://ZiruiXuPhD.github.io">https://ZiruiXuPhD.github.io</a><br>
+    If you are not redirected automatically, please click the above link.
+  </p>
+
   <script>
     (function() {
-      const url = 'https://ZiruiXuPhD.github.io' + window.location.pathname + window.location.search + window.location.hash;
-      document.querySelector('body').innerHTML = `
-      <p>
-      You are being redirected to <a href="${url}">${url}</a><br>
-      If you are not redirected automatically, <a href="${url}">click here</a>
-      </p>
-      `;
-      window.location.replace(url);})();
+      const url = 'https://ZiruiXuPhD.github.io'+window.location.pathname+window.location.search+window.location.hash;
+      const placeholder = document.getElementById('placeholder');
+      placeholder.textContent = url;
+      placeholder.href = url;
+    })();
   </script>
+
 </body>
 </html>
